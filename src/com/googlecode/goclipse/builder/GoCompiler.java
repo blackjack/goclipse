@@ -91,6 +91,7 @@ public class GoCompiler {
 			cmd.add(0, GoConstants.GO_GET_COMMAND);
 			cmd.add(0, compilerPath);
 			
+			
 			String   goPath  = buildGoPath(project, projectLocation, true);
 			String   PATH    = System.getenv("PATH");
 			
@@ -220,26 +221,46 @@ public class GoCompiler {
 			// the path exist to find the cc
 			String   path    = System.getenv("PATH");
 			String   outPath = null;
-			String[] cmd     = {};
+			List<String> cmd        = new ArrayList<String>();
 			
 			MarkerUtilities.deleteFileMarkers(file);
 			if(Environment.INSTANCE.isCmdSrcFolder(project, (IFolder)file.getParent())){
 				outPath = projectLocation.toOSString() + File.separator + binFolder +  File.separator + target.getName().replace(GoConstants.GO_SOURCE_FILE_EXTENSION, outExtension);
-				cmd     = new String[]{
-						        compilerPath,
-						        GoConstants.GO_BUILD_COMMAND,
-						        GoConstants.COMPILER_OPTION_O,
-						        outPath, file.getName() }
-						  ;
+				cmd.add(compilerPath);
+				cmd.add(GoConstants.GO_BUILD_COMMAND);
+				cmd.add(GoConstants.COMPILER_OPTION_O);
+				cmd.add(outPath);
 				
+				String gcflags = Environment.INSTANCE.getCompilerOptions(project);
+				if (!gcflags.isEmpty()) {
+					cmd.add(GoConstants.COMPILER_OPTION_GCFLAGS);
+					cmd.add(gcflags);
+				}
+				String ldflags = Environment.INSTANCE.getLinkerOptions(project);
+				if (!ldflags.isEmpty()) {
+					cmd.add(GoConstants.COMPILER_OPTION_LDFLAGS);
+					cmd.add(ldflags);
+				}
+				
+				cmd.add(file.getName());
 			} else {
 				MarkerUtilities.deleteFileMarkers(file.getParent());
 				outPath = projectLocation.toOSString() + File.separator + binFolder +  File.separator + target.getParentFile().getName() + outExtension;
-				cmd = new String[] {
-			        compilerPath,
-			        GoConstants.GO_BUILD_COMMAND,
-			        GoConstants.COMPILER_OPTION_O,
-			        outPath };
+				cmd.add(compilerPath);
+				cmd.add(GoConstants.GO_BUILD_COMMAND);
+				cmd.add(GoConstants.COMPILER_OPTION_O);
+				cmd.add(outPath);
+				
+				String gcflags = Environment.INSTANCE.getCompilerOptions(project);
+				if (!gcflags.isEmpty()) {
+					cmd.add(GoConstants.COMPILER_OPTION_GCFLAGS);
+					cmd.add(gcflags);
+				}
+				String ldflags = Environment.INSTANCE.getLinkerOptions(project);
+				if (!ldflags.isEmpty()) {
+					cmd.add(GoConstants.COMPILER_OPTION_LDFLAGS);
+					cmd.add(ldflags);
+				}
 			}
 			
  			String goPath = buildGoPath(project, projectLocation, false);
@@ -285,13 +306,23 @@ public class GoCompiler {
 		try {
 			// the path exist to find the cc
 			String   path    = System.getenv("PATH");
-			String[] cmd     = {};
+			List<String> cmd        = new ArrayList<String>();
 			
 			MarkerUtilities.deleteFileMarkers(target);
-			cmd = new String[] {
-		        compilerPath,
-		        GoConstants.GO_BUILD_COMMAND
-		    };
+			
+			cmd.add(compilerPath);
+			cmd.add(GoConstants.GO_BUILD_COMMAND);
+			
+			String gcflags = Environment.INSTANCE.getCompilerOptions(project);
+			if (!gcflags.isEmpty()) {
+				cmd.add(GoConstants.COMPILER_OPTION_GCFLAGS);
+				cmd.add(gcflags);
+			}
+			String ldflags = Environment.INSTANCE.getLinkerOptions(project);
+			if (!ldflags.isEmpty()) {
+				cmd.add(GoConstants.COMPILER_OPTION_LDFLAGS);
+				cmd.add(ldflags);
+			}
 			
 			String goPath = buildGoPath(project, projectLocation, false);
 
@@ -367,15 +398,25 @@ public class GoCompiler {
 		
 		try {
 			String  goPath  = buildGoPath(project, projectLocation, false);
+						
+			List<String> cmd        = new ArrayList<String>();
+			cmd.add(compilerPath);
+			cmd.add(GoConstants.GO_BUILD_COMMAND);
+			cmd.add(GoConstants.COMPILER_OPTION_O);
+			cmd.add(pkgpath);
 			
-			String[] buildCmd = { compilerPath,
-			         GoConstants.GO_BUILD_COMMAND,
-			         GoConstants.COMPILER_OPTION_O,
-			         pkgpath,
-			         "."
-			       };
-			
-			builder = new ProcessBuilder(buildCmd).directory(workingDir);
+			String gcflags = Environment.INSTANCE.getCompilerOptions(project);
+			if (!gcflags.isEmpty()) {
+				cmd.add(GoConstants.COMPILER_OPTION_GCFLAGS);
+				cmd.add(gcflags);
+			}
+			String ldflags = Environment.INSTANCE.getLinkerOptions(project);
+			if (!ldflags.isEmpty()) {
+				cmd.add(GoConstants.COMPILER_OPTION_LDFLAGS);
+				cmd.add(ldflags);
+			}
+					
+			builder = new ProcessBuilder(cmd).directory(workingDir);
 			
 			// PATH so go can find cc
 			String path = System.getenv("PATH");
@@ -426,7 +467,23 @@ public class GoCompiler {
 		final String           compilerPath    = preferenceStore.getString(PreferenceConstants.GO_TOOL_PATH);
 		
 		try {
-			String[] cmd = { compilerPath, GoConstants.GO_INSTALL_COMMAND, "all" };
+			List<String> cmd = new ArrayList<String>();
+				
+			cmd.add(compilerPath);
+			cmd.add(GoConstants.GO_INSTALL_COMMAND);
+			
+			String gcflags = Environment.INSTANCE.getCompilerOptions(project);
+			if (!gcflags.isEmpty()) {
+				cmd.add(GoConstants.COMPILER_OPTION_GCFLAGS);
+				cmd.add(gcflags);
+			}
+			String ldflags = Environment.INSTANCE.getLinkerOptions(project);
+			if (!ldflags.isEmpty()) {
+				cmd.add(GoConstants.COMPILER_OPTION_LDFLAGS);
+				cmd.add(ldflags);
+			}
+			
+			cmd.add("all");
 
 			String  goPath  = buildGoPath(project, projectLocation, false);
 			

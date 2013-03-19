@@ -73,6 +73,16 @@ public class ProjectBuildConfiguration extends PropertyPage {
 		if (binOutputfolder != null) {
 			Environment.INSTANCE.setBinOutputFolder(getProject(), Path.fromOSString(binOutputfolder));
 		}
+		
+		String compilerOptions = composite.getCompilerOptions();
+		if (compilerOptions != null) {
+			Environment.INSTANCE.setCompilerOptions(getProject(), compilerOptions);
+		}
+		
+		String linkerOptions = composite.getLinkerOptions();
+		if (linkerOptions != null) {
+			Environment.INSTANCE.setLinkerOptions(getProject(), linkerOptions);
+		}
 
 		String unitTestRegex = composite.getUnitTestRegEx();
 		if (unitTestRegex != null) {

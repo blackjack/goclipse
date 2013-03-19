@@ -53,6 +53,8 @@ public class Environment {
 	private static final String PROJECT_SOURCE_FOLDERS        = "com.googlecode.goclipse.environment.source.folders";
 	private static final String PROJECT_PKG_OUTPUT_FOLDERS    = "com.googlecode.goclipse.environment.pkg.output.folders";
 	private static final String PROJECT_BIN_OUTPUT_FOLDERS    = "com.googlecode.goclipse.environment.bin.output.folders";
+	private static final String PROJECT_COMPILER_OPTIONS    = "com.googlecode.goclipse.environment.bin.compiler.options";
+	private static final String PROJECT_LINKER_OPTIONS    = "com.googlecode.goclipse.environment.bin.linker.options";
 	private static final String PROJECT_ENABLE_AUTO_UNIT_TEST = "com.googlecode.goclipse.environment.auto.unit.test";
 	private static final String PROJECT_AUTO_UNIT_TEST_REGEX  = "com.googlecode.goclipse.environment.auto.unit.test.regex";
 
@@ -428,7 +430,37 @@ public class Environment {
 			return path;
 		}
 	}
+	
+	public void setCompilerOptions(IProject project, String options) {
+		Properties properties = getProperties(project);
+		properties.setProperty(PROJECT_COMPILER_OPTIONS, options);
+		saveProperties(project);
+	}
+	
+	public String getCompilerOptions(IProject project) {
+		Properties properties = getProperties(project);
+		String result = properties.getProperty(PROJECT_COMPILER_OPTIONS);
+		if (result != null)
+			return result;
+		else
+			return new String();
+	}
 
+	public void setLinkerOptions(IProject project, String options) {
+		Properties properties = getProperties(project);
+		properties.setProperty(PROJECT_LINKER_OPTIONS, options);
+		saveProperties(project);
+	}
+	
+	public String getLinkerOptions(IProject project) {
+		Properties properties = getProperties(project);
+		String result = properties.getProperty(PROJECT_LINKER_OPTIONS);
+		if (result != null)
+			return result;
+		else
+			return new String();
+	}
+	
 	public IPath getDefaultCmdSourceFolder() {
 		return Path.fromOSString("src");
 	}

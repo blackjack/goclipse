@@ -11,9 +11,12 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -24,12 +27,10 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import com.googlecode.goclipse.Activator;
 import com.googlecode.goclipse.Environment;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 /**
  * @author steel
@@ -111,11 +112,14 @@ public class ProjectBuildConfigurationComposite extends Composite {
    private Text                      binOutputText             = null;
    private Button                    binOutputBrowseButton     = null;
    private Button                    removeButton              = null;
+   private Text						 compilerOptionsText	   = null;
+   private Text						 linkerOptionsText	   	   = null;
    private TabFolder                 tabFolder                 = null;
    private TabFolder tabFolder_1;
    private Composite                 sourceComposite           = null;
    private Composite                 projectsComposite         = null;
    private Composite                 libraryComposite          = null;
+   private Composite				 compilerComposite		   = null;
    private Group                     projectGroup              = null;
    private Group                     librariesGroup            = null;
    private List                      projectsList              = null;
@@ -459,6 +463,7 @@ public class ProjectBuildConfigurationComposite extends Composite {
       createSourceComposite();
       createProjectsComposite();
       createLibraryComposite();
+      createCompilerComposite();
       TabItem tabItem = new TabItem(tabFolder_1, SWT.NONE);
       tabItem.setText("Source");
       tabItem.setControl(sourceComposite);
@@ -513,6 +518,9 @@ public class ProjectBuildConfigurationComposite extends Composite {
       TabItem tabItem2 = new TabItem(tabFolder_1, SWT.NONE);
       tabItem2.setText("Libraries");
       tabItem2.setControl(libraryComposite);
+      TabItem tabItem3 = new TabItem(tabFolder_1, SWT.NONE);
+      tabItem3.setText("Compiler");
+      tabItem3.setControl(compilerComposite);
       
       btnEnableAutomaticUnit.addSelectionListener(new SelectionAdapter() {
         	@Override
@@ -555,6 +563,20 @@ public class ProjectBuildConfigurationComposite extends Composite {
       libraryComposite = new Composite(tabFolder_1, SWT.NONE);
       libraryComposite.setLayout(new GridLayout());
       createLibrariesGroup();
+   }
+   
+   /**
+    * This method initializes compilerComposite
+    */
+   private void createCompilerComposite() {
+	  compilerComposite = new Composite(tabFolder_1, SWT.NONE	);
+	   RowLayout layout = new RowLayout();
+	   layout.wrap = false;
+	   layout.pack = false;
+	   layout.type = SWT.VERTICAL;
+	   layout.spacing = 0;
+	   compilerComposite.setLayout(layout);
+	  createCompilerGroup();
    }
 
    /**
@@ -642,6 +664,16 @@ public class ProjectBuildConfigurationComposite extends Composite {
       removeLibraryButton.setText("Remove...");
       removeLibraryButton.setLayoutData(gridData13);
    }
+   
+   private void createCompilerGroup() {
+	   IProject project = projectBuildConfiguration.getProject();
+	   new Label(compilerComposite,SWT.NONE).setText("Compiler command line options:");
+	   compilerOptionsText = new Text(compilerComposite, SWT.BORDER);
+	   compilerOptionsText.setText(Environment.INSTANCE.getCompilerOptions(project));
+	   new Label(compilerComposite,SWT.NONE).setText("Linker command line options:");
+	   linkerOptionsText = new Text(compilerComposite, SWT.BORDER);
+	   linkerOptionsText.setText(Environment.INSTANCE.getLinkerOptions(project));
+   }
 
    /**
     * Get the source folders
@@ -674,6 +706,24 @@ public class ProjectBuildConfigurationComposite extends Composite {
     */
    public String getBinOutputFolder() {
       return binOutputText.getText();
+   }
+   
+   /**
+    * 
+    * Return the compiler command line options
+    * @return
+    */
+   public String getCompilerOptions() {
+	   return compilerOptionsText.getText();
+   }
+   
+   /**
+    * 
+    * Return the compiler command line options
+    * @return
+    */
+   public String getLinkerOptions() {
+	   return linkerOptionsText.getText();
    }
    
    /**

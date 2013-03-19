@@ -28,6 +28,8 @@ public class GoConstants {
 	public static final String COMPILER_OPTION_L 	= "-L";
 	public static final String COMPILER_OPTION_O 	= "-o";
 	public static final String COMPILER_OPTION_E 	= "-e";
+	public static final String COMPILER_OPTION_GCFLAGS = "-gcflags";
+	public static final String COMPILER_OPTION_LDFLAGS = "-ldflags";
 	public static final String PACKER_OPTIONS_GRC 	= "grc";
 	
 	public static final String GO_VERSION_COMMAND  = "version";
